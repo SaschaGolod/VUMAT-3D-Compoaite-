@@ -6,7 +6,8 @@ C the instantaneous damage is still kept on
 C the elemet deletion by principal starain is removed
 C element deletion is done if any of the 4 damage conditions are reached
 C checked on tensie speciimen and small impact problem
-C working on further improvement 
+C working on further improvement
+C Implimented explicit type declaration for all variables
 C
        subroutine vumat(
 c Read only -
@@ -84,8 +85,12 @@ c
 *
       character*80 cmname
 *
+      double precision :: zero, one, two, half
       parameter( zero = 0.d0, one = 1.d0, two = 2.d0, half = .5d0 )
 *
+      integer :: i_svd_DmgFiberT, i_svd_DmgFiberC, 
+     * i_svd_DmgMatrixT, i_svd_DmgMatrixC, i_svd_statusMp, 
+     * i_svd_dampStress, i_svd_Strain, n_svd_required
       parameter( 
      *     i_svd_DmgFiberT   = 1,
      *     i_svd_DmgFiberC   = 2,
@@ -108,6 +113,8 @@ c     *    i_svd_StrainYz = 16,
 c     *    i_svd_StrainZx = 17,
      *     n_svd_required = 17 )
 *
+      integer :: i_s33_Xx, i_s33_Yy, i_s33_Zz,
+     * i_s33_Xy, i_s33_Yz, i_s33_Zx
       parameter( 
      *     i_s33_Xx = 1, 
      *     i_s33_Yy = 2, 
@@ -117,6 +124,13 @@ c     *    i_svd_StrainZx = 17,
      *     i_s33_Zx = 6 )
 *
 * Structure of property array
+      integer :: i_pro_E1, i_pro_E2, i_pro_E3,
+     * i_pro_nu12, i_pro_nu13, i_pro_nu23,
+     * i_pro_G12, i_pro_G13, i_pro_G23,
+     * i_pro_beta,
+     * i_pro_sigu1t, i_pro_sigu1c, i_pro_sigu2t,i_pro_sigu2c,
+     * i_pro_sigu3t, i_pro_sigu3c, 
+     * i_pro_sigu12, i_pro_sigu13,i_pro_sigu23
       parameter (
      *     i_pro_E1    = 1,
      *     i_pro_E2    = 2,
@@ -142,6 +156,9 @@ c     *    i_svd_StrainZx = 17,
 * Temporary arrays
       dimension eigen(maxblk*3)
 *
+      double precision :: E1, E2, E3, xnu12, xnu13, xnu23,
+     * G12, G13, G23, xnu21, xnu31, xnu32, gg, 
+     * C11, C22, C33, C12, C23, C13
 * Read material properties
 *
       E1 = props(i_pro_E1)

@@ -88,6 +88,9 @@ c
       double precision :: zero, one, two, half
       parameter( zero = 0.d0, one = 1.d0, two = 2.d0, half = .5d0 )
 *
+      external xplb_abqerr, xplb_exit, copyr, eig33Anal, OrthoEla3dExp,
+     *  Hashin3d, strainUpdate, betaDamping3d, EnergyInternal3d 
+*
       integer :: i_svd_DmgFiberT, i_svd_DmgFiberC, 
      * i_svd_DmgMatrixT, i_svd_DmgMatrixC, i_svd_statusMp, 
      * i_svd_dampStress, i_svd_Strain, n_svd_required
@@ -159,6 +162,8 @@ c     *    i_svd_StrainZx = 17,
       double precision :: E1, E2, E3, xnu12, xnu13, xnu23,
      * G12, G13, G23, xnu21, xnu31, xnu32, gg, 
      * C11, C22, C33, C12, C23, C13
+      double precision :: f1t, f1c, f2t, f2c, f3t, f3c,
+     * f12, f13, f23, beta
 * Read material properties
 *
       E1 = props(i_pro_E1)
@@ -296,6 +301,11 @@ c     *    i_svd_StrainZx = 17,
 
 *  Orthotropic elasticity, 3D case -
 *
+      double precision :: zero, one, two
+      integer :: i_s33_Xx, i_s33_Yy, i_s33_Zz,
+     * i_s33_Xy, i_s33_Yz, i_s33_Zx, n_s33_Car,k
+      double precision :: dft, dfc, dmt, dmc, df,
+     * dc11, dc22, dc33, dc12, dc23, dc13, dg12, dg23, dg13 
       parameter( zero = 0.d0, one = 1.d0, two = 2.d0)
       parameter( 
      *     i_s33_Xx = 1, 
@@ -311,6 +321,7 @@ c     *    i_svd_StrainZx = 17,
      *     dmgMatrixT(nblock), dmgMatrixC(nblock),
      *     stress(nblock,n_s33_Car)
 *     -- shear fraction in matrix tension and compression mode
+      double precision :: smt, smc
       parameter ( smt = 0.9d0, smc = 0.9d0 )
 *
       do k = 1, nblock
